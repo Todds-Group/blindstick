@@ -7,16 +7,19 @@ from .models import Location
 def index(request):
     return render(request, 'app/index.html')
 
-def receive_lat_lng(request, lat, lng):
-    loc = Location()
-    loc.lat = float(lat)
-    loc.lng = float(lng)
-    loc.save()
-    context = {
-        lat: lat,
-        lng: lng,
-    }
-    return JsonResponse(context)
+def receive_lat_lng(request):
+    data = {'status': 'failed'}
+    if request.method == "GET":
+        lat = request.GET.get('lat', 0.0)
+        lng = request.GET.get('lng', 0.0)
+        loc = Location()
+        loc.lat = float(lat)
+        loc.lng = float(lng)
+        loc.save()
+        data = {
+            "status": "ok"
+        }
+    return JsonResponse(data)
 
 def read_last_location(request):
     loc = Location.objects.last()
